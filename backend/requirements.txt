@@ -1,0 +1,9 @@
+Flask
+flask-cors
+pymongo
+python-dotenv
+bcrypt
+PyJWT
+cloudinary
+dnspython
+gunicorn
