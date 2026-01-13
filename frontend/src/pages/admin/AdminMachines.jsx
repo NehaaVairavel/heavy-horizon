@@ -22,20 +22,14 @@ export default function AdminMachines() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const [previews, setPreviews] = useState([]);
-  const previewsRef = useRef([]);
-
-  useEffect(() => {
-    previewsRef.current = previews;
-  }, [previews]);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [previewUrls, setPreviewUrls] = useState([]);
 
   useEffect(() => {
     fetchMachines();
     return () => {
-      if (previewsRef.current) {
-        previewsRef.current.forEach(url => URL.revokeObjectURL(url));
-      }
+      // Cleanup preview URLs on unmount
+      previewUrls.forEach(url => URL.revokeObjectURL(url));
     };
   }, []);
 
@@ -51,22 +45,21 @@ export default function AdminMachines() {
     }
   };
 
-  const handleImageSelect = (e) => {
+  const handleImageChange = (e) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
     const files = Array.from(e.target.files);
 
     // Check if total images (existing + new) exceed 10
-    if (previews.length + files.length > 10) {
+    if (previewUrls.length + files.length > 10) {
       setMessage({ type: 'error', text: 'Maximum 10 images allowed' });
       return;
     }
 
-    const newSelectedFiles = [...selectedFiles, ...files];
     const newPreviewUrls = files.map(file => URL.createObjectURL(file));
 
-    setSelectedFiles(newSelectedFiles);
-    setPreviews(prev => [...prev, ...newPreviewUrls]);
+    setSelectedImages(prev => [...prev, ...files]);
+    setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
     setMessage({ type: 'success', text: 'Images selected successfully' });
   };
 
@@ -79,9 +72,9 @@ export default function AdminMachines() {
       let finalImages = [];
 
       // 1. Upload files to Cloudinary if there are any selected
-      if (selectedFiles.length > 0) {
+      if (selectedImages.length > 0) {
         setUploading(true);
-        const uploadResult = await uploadImages(selectedFiles);
+        const uploadResult = await uploadImages(selectedImages);
         finalImages = uploadResult.images;
         setUploading(false);
       }
@@ -89,7 +82,7 @@ export default function AdminMachines() {
       // 2. Prepare payload
       const payload = {
         ...formData,
-        images: finalImages, // In a real edit scenario, we'd merge with existing
+        images: finalImages,
         year: Number(formData.year) || 0,
         hours: Number(formData.hours) || 0,
       };
@@ -100,9 +93,9 @@ export default function AdminMachines() {
 
       // Reset everything
       setFormData(emptyMachine);
-      setSelectedFiles([]);
-      previews.forEach(url => URL.revokeObjectURL(url));
-      setPreviews([]);
+      setSelectedImages([]);
+      previewUrls.forEach(url => URL.revokeObjectURL(url));
+      setPreviewUrls([]);
       setShowForm(false);
 
       // Refresh the list immediately
@@ -133,10 +126,10 @@ export default function AdminMachines() {
 
   const removeImage = (index) => {
     // Revoke the URL for the removed preview
-    URL.revokeObjectURL(previews[index]);
+    URL.revokeObjectURL(previewUrls[index]);
 
-    setPreviews(prev => prev.filter((_, i) => i !== index));
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+    setSelectedImages(prev => prev.filter((_, i) => i !== index));
 
     setFormData(prev => ({
       ...prev,
@@ -261,28 +254,25 @@ export default function AdminMachines() {
             </div>
 
             <div className="admin-form-group">
-              <label>Images ({previews.length}/10)</label>
+              <label>Images ({previewUrls.length}/10)</label>
               <div className="image-upload-area">
                 <input
                   type="file"
                   accept="image/*"
                   multiple
-                  onChange={handleImageSelect}
-                  disabled={uploading || previews.length >= 10}
+                  onChange={handleImageChange}
+                  disabled={uploading || previewUrls.length >= 10}
                 />
                 {uploading && <span className="upload-status">Uploading to Cloudinary...</span>}
               </div>
-              {previews.length > 0 && (
+              {previewUrls.length > 0 && (
                 <div className="image-preview-grid">
-                  {normalizeImages(previews).map((url, index) => (
+                  {previewUrls.map((url, index) => (
                     <div key={index} className="image-preview">
                       <img
                         src={url}
                         alt={`Preview ${index + 1}`}
-                        onError={(e) => {
-                          console.error("Preview image failed to load:", url);
-                          e.target.src = 'https://via.placeholder.com/150?text=Error';
-                        }}
+                        style={{ objectFit: 'cover' }}
                       />
                       <button type="button" onClick={() => removeImage(index)}>×</button>
                     </div>
