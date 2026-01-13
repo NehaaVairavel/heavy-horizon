@@ -44,15 +44,21 @@ export default function Blogs() {
               <div className="loading-spinner" />
             </div>
           ) : (blogs && blogs.length > 0) ? (
-            <div className="blog-grid">
+            <div className="grid-3">
               {blogs.map((blog) => (
                 <BlogCard key={blog._id} blog={blog} />
               ))}
             </div>
           ) : (
-            <div className="empty-state" style={{ textAlign: 'center', padding: '100px 20px' }}>
+            <div style={{ textAlign: 'center', padding: '100px 20px' }}>
+              <div className="coming-soon-icon" style={{ marginBottom: '24px' }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+              </div>
               <h2 className="section-title">Coming <span>Soon</span></h2>
-              <p style={{ color: 'var(--muted-foreground)', maxWidth: '500px', margin: '0 auto' }}>
+              <p style={{ color: 'var(--muted-foreground)', maxWidth: '500px', margin: '16px auto 0', fontSize: '1.125rem' }}>
                 Our blog series is being prepared. Stay tuned for industry insights and updates.
               </p>
             </div>

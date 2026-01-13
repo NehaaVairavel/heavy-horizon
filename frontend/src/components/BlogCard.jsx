@@ -62,8 +62,8 @@ export function BlogCard({ blog }) {
     const blogId = blog._id || '';
 
     return (
-        <article className="blog-card">
-            <div className="blog-image">
+        <div className="card">
+            <div className="card-image">
                 {images.length > 0 ? (
                     <div className="image-slider">
                         <img
@@ -103,107 +103,109 @@ export function BlogCard({ blog }) {
                         )}
                     </div>
                 ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#999', backgroundColor: '#f5f5f5' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--muted-foreground)', backgroundColor: 'var(--muted)' }}>
                         No image
                     </div>
                 )}
             </div>
-            <div className="blog-content" style={{ padding: '24px', display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <span className="blog-date" style={{ fontSize: '0.8rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px', display: 'block' }}>
-                    {getBlogDate(blog)}
-                </span>
 
-                <h3 className="blog-title" style={{ fontSize: '1.35rem', fontWeight: 700, marginBottom: '16px', lineHeight: '1.4' }}>
-                    <Link to={`/blogs/${blogId}`} style={{ color: 'inherit', textDecoration: 'none', transition: 'color 0.2s' }}>
-                        {blog.title || 'Untitled Blog'}
-                    </Link>
-                </h3>
+            <div className="card-body">
+                <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                    <h3 className="card-title">
+                        <Link to={`/blogs/${blogId}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                            {blog.title || 'Untitled Blog'}
+                        </Link>
+                    </h3>
 
-                <div
-                    className="blog-excerpt-container"
-                    style={{
-                        maxHeight: isExpanded ? '2000px' : '4.8em',
-                        overflow: 'hidden',
-                        transition: 'all 0.5s ease-in-out',
-                        position: 'relative',
-                        marginBottom: isExpanded ? '24px' : '12px'
-                    }}
-                >
-                    <p style={{
-                        margin: 0,
-                        lineHeight: '1.6',
-                        color: '#4b5563',
-                        fontSize: '0.95rem',
-                        display: isExpanded ? 'block' : '-webkit-box',
-                        WebkitLineClamp: isExpanded ? 'unset' : 3,
-                        WebkitBoxOrient: 'vertical',
-                        whiteSpace: isExpanded ? 'pre-wrap' : 'normal'
-                    }}>
-                        {blog.content || 'Stay tuned for more updates and insights from Heavy Horizon.'}
-                    </p>
-                </div>
+                    <div className="card-specs" style={{ marginBottom: isExpanded ? '16px' : '8px' }}>
+                        {getBlogDate(blog) !== 'Recent' && (
+                            <div className="spec-item">
+                                <label>Published On</label>
+                                <span>{getBlogDate(blog)}</span>
+                            </div>
+                        )}
+                    </div>
 
-                <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid #f3f4f6' }}>
-                    <button
-                        onClick={(e) => { e.preventDefault(); setIsExpanded(!isExpanded); }}
+                    <div
+                        className="blog-excerpt-container"
                         style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#f97316',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                            padding: 0,
-                            fontWeight: 600,
-                            fontSize: '0.9rem',
-                            fontFamily: 'inherit',
-                            transition: 'opacity 0.2s'
+                            maxHeight: isExpanded ? '2000px' : '4.8em',
+                            overflow: 'hidden',
+                            transition: 'all 0.5s ease-in-out',
+                            position: 'relative',
+                            marginBottom: isExpanded ? '24px' : '16px'
                         }}
-                        onMouseOver={(e) => e.currentTarget.style.opacity = '0.8'}
-                        onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
                     >
-                        {isExpanded ? 'View Less' : 'View More'}
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            style={{
-                                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                                transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                            }}
-                        >
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                    </button>
+                        <p style={{
+                            margin: 0,
+                            lineHeight: '1.6',
+                            color: 'var(--muted-foreground)',
+                            fontSize: '0.95rem',
+                            display: isExpanded ? 'block' : '-webkit-box',
+                            WebkitLineClamp: isExpanded ? 'unset' : 3,
+                            WebkitBoxOrient: 'vertical',
+                            whiteSpace: isExpanded ? 'pre-wrap' : 'normal'
+                        }}>
+                            {blog.content || 'Stay tuned for more updates and insights from Heavy Horizon.'}
+                        </p>
+                    </div>
 
-                    {blogId && (
-                        <Link
-                            to={`/blogs/${blogId}`}
+                    <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
+                        <button
+                            onClick={(e) => { e.preventDefault(); setIsExpanded(!isExpanded); }}
+                            className="btn-link"
                             style={{
-                                color: '#374151',
-                                textDecoration: 'none',
-                                fontSize: '0.85rem',
-                                fontWeight: 500,
+                                color: 'var(--primary)',
+                                fontWeight: 600,
+                                fontSize: '0.875rem',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '4px'
+                                gap: '4px',
+                                padding: 0
                             }}
                         >
-                            Full Article
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            {isExpanded ? 'View Less' : 'View More'}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                style={{
+                                    transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                                    transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                                }}
+                            >
+                                <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
-                        </Link>
-                    )}
+                        </button>
+
+                        {blogId && (
+                            <Link
+                                to={`/blogs/${blogId}`}
+                                className="card-link"
+                                style={{
+                                    fontSize: '0.875rem',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    color: 'var(--foreground)'
+                                }}
+                            >
+                                Read More
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" width="14" height="14">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                </svg>
+                            </Link>
+                        )}
+                    </div>
                 </div>
             </div>
-        </article>
+        </div>
     );
 }
