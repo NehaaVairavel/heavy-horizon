@@ -122,3 +122,8 @@ export const getEnquiries = async () => {
   return response.data;
 };
 
+export const getDashboardCounts = async () => {
+  const response = await api.get('/admin/dashboard/counts');
+  return response.data;
+};
+

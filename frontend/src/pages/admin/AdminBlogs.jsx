@@ -63,7 +63,7 @@ export default function AdminBlogs() {
       // Set featured_image to the first image in the array for backward compatibility
       const payload = {
         ...formData,
-        featured_image: formData.images.length > 0 ? formData.images[0] : ''
+        featured_image: formData.images.length > 0 ? (formData.images[0].secure_url || formData.images[0]) : ''
       };
 
       await addBlog(payload);
@@ -134,7 +134,7 @@ export default function AdminBlogs() {
                 <div className="image-preview-grid">
                   {formData.images.map((img, index) => (
                     <div key={index} className="image-preview">
-                      <img src={img} alt={`Preview ${index + 1}`} />
+                      <img src={img.secure_url || img} alt={`Preview ${index + 1}`} />
                       <button type="button" onClick={() => removeImage(index)}>×</button>
                     </div>
                   ))}

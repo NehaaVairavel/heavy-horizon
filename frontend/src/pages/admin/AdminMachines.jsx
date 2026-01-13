@@ -239,7 +239,7 @@ export default function AdminMachines() {
                 <div className="image-preview-grid">
                   {formData.images.map((img, index) => (
                     <div key={index} className="image-preview">
-                      <img src={img} alt={`Preview ${index + 1}`} />
+                      <img src={img.secure_url || img} alt={`Preview ${index + 1}`} />
                       <button type="button" onClick={() => removeImage(index)}>×</button>
                     </div>
                   ))}
@@ -278,31 +278,36 @@ export default function AdminMachines() {
               </tr>
             </thead>
             <tbody>
-              {(machines || []).map((machine, index) => (
-                <tr key={machine._id || index}>
-                  <td>
-                    <img
-                      src={(machine.images && machine.images[0]) || 'https://via.placeholder.com/60x40'}
-                      alt={machine.title}
-                      className="table-thumbnail"
-                    />
-                  </td>
-                  <td>{machine.title}</td>
-                  <td>{machine.category}</td>
-                  <td><span className={`badge badge-${(machine.type || machine.purpose || '').toLowerCase()}`}>{machine.type || machine.purpose}</span></td>
-                  <td>{machine.year}</td>
-                  <td>{machine.hours.toLocaleString()}</td>
-                  <td><span className={`badge badge-${machine.status.toLowerCase()}`}>{machine.status}</span></td>
-                  <td>
-                    <button className="btn-icon delete" onClick={() => handleDelete(machine._id)} title="Delete">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {(machines || []).map((machine, index) => {
+                const firstImage = machine.images && machine.images[0];
+                const imageUrl = firstImage?.secure_url || firstImage || 'https://via.placeholder.com/60x40';
+
+                return (
+                  <tr key={machine._id || index}>
+                    <td>
+                      <img
+                        src={imageUrl}
+                        alt={machine.title}
+                        className="table-thumbnail"
+                      />
+                    </td>
+                    <td>{machine.title}</td>
+                    <td>{machine.category}</td>
+                    <td><span className={`badge badge-${(machine.type || machine.purpose || '').toLowerCase()}`}>{machine.type || machine.purpose}</span></td>
+                    <td>{machine.year}</td>
+                    <td>{machine.hours.toLocaleString()}</td>
+                    <td><span className={`badge badge-${machine.status.toLowerCase()}`}>{machine.status}</span></td>
+                    <td>
+                      <button className="btn-icon delete" onClick={() => handleDelete(machine._id)} title="Delete">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -55,7 +55,7 @@ export default function SpareParts() {
                 <div key={part._id} className="card">
                   <div className="card-image">
                     {part.images && part.images.length > 0 ? (
-                      <img src={part.images[0]} alt={part.name} loading="lazy" />
+                      <img src={part.images[0]?.secure_url || part.images[0]} alt={part.name} loading="lazy" />
                     ) : (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--muted-foreground)' }}>
                         No image

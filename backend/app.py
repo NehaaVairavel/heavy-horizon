@@ -85,11 +85,36 @@ def admin_login():
 @token_required
 def upload_images():
     files = request.files.getlist("images")
-    urls = []
+    image_data = []
     for file in files:
         res = cloudinary.uploader.upload(file, folder="heavy_horizon")
-        urls.append(res["secure_url"])
-    return jsonify(urls)
+        image_data.append({
+            "secure_url": res["secure_url"],
+            "public_id": res["public_id"]
+        })
+    return jsonify(image_data)
+
+# Helper for Cloudinary Cleanup
+def delete_cloudinary_images(image_list):
+    """
+    Deletes images from Cloudinary based on an array of image objects or strings.
+    Handles legacy string URLs (skips them) and new object format {secure_url, public_id}.
+    """
+    if not image_list or not isinstance(image_list, list):
+        return
+
+    for img in image_list:
+        if isinstance(img, dict) and img.get("public_id"):
+            try:
+                cloudinary.uploader.destroy(img["public_id"])
+                print(f"DEBUG: Deleted Cloudinary image {img['public_id']}")
+            except Exception as e:
+                print(f"ERROR: Failed to delete Cloudinary image {img['public_id']}: {e}")
+        elif isinstance(img, str) and "cloudinary.com" in img:
+            # Legacy support: we can't easily get the public_id from a raw URL reliably 
+            # without complex regex, so we log it and move on. 
+            # Most modern Cloudinary URLs include the public_id, but it's safer to skip.
+            print(f"DEBUG: Skipping legacy image URL deletion: {img}")
 
 # ---------------- MACHINES ----------------
 @app.route("/api/machines", methods=["GET"])
@@ -126,6 +151,12 @@ def update_delete_machine(id):
     if request.method == "PUT":
         machines.update_one({"_id": ObjectId(id)}, {"$set": request.json})
         return jsonify({"message": "Machine updated"})
+    
+    # DELETE logic with Cloudinary cleanup
+    machine = machines.find_one({"_id": ObjectId(id)})
+    if machine:
+        delete_cloudinary_images(machine.get("images", []))
+    
     machines.delete_one({"_id": ObjectId(id)})
     return jsonify({"message": "Machine deleted"})
 
@@ -146,6 +177,10 @@ def add_part():
 @app.route("/admin/parts/<id>", methods=["DELETE"])
 @token_required
 def delete_part(id):
+    part = parts.find_one({"_id": ObjectId(id)})
+    if part:
+        delete_cloudinary_images(part.get("images", []))
+    
     parts.delete_one({"_id": ObjectId(id)})
     return jsonify({"message": "Part deleted"})
 
@@ -177,6 +212,19 @@ def add_blog():
 @app.route("/admin/blogs/<id>", methods=["DELETE"])
 @token_required
 def delete_blog(id):
+    blog = blogs.find_one({"_id": ObjectId(id)})
+    if blog:
+        # Collect all images including featured_image if different
+        images_to_delete = blog.get("images", [])
+        feat_img = blog.get("featured_image")
+        if feat_img and feat_img not in images_to_delete:
+            if isinstance(feat_img, dict):
+                images_to_delete.append(feat_img)
+            elif isinstance(feat_img, str):
+                images_to_delete.append(feat_img)
+                
+        delete_cloudinary_images(images_to_delete)
+        
     blogs.delete_one({"_id": ObjectId(id)})
     return jsonify({"message": "Blog deleted"})
 
@@ -190,6 +238,21 @@ def enquiry():
 @token_required
 def get_enquiries():
     return jsonify([{**e, "_id": str(e["_id"])} for e in enquiries.find()])
+
+# ---------------- DASHBOARD STATS ----------------
+@app.route("/admin/dashboard/counts", methods=["GET"])
+@token_required
+def get_dashboard_counts():
+    try:
+        return jsonify({
+            "machines": machines.count_documents({}),
+            "parts": parts.count_documents({}),
+            "blogs": blogs.count_documents({}),
+            "enquiries": enquiries.count_documents({})
+        })
+    except Exception as e:
+        print(f"Error fetching dashboard counts: {e}")
+        return jsonify({"error": str(e)}), 500
 
 # ---------------- SERVE FRONTEND ----------------
 @app.route("/")

@@ -23,7 +23,7 @@ export function MachineCard({ machine, onEnquiry, showStatus = false }) {
         {machine.images.length > 0 ? (
           <div className="image-slider">
             <img
-              src={machine.images[currentImageIndex]}
+              src={machine.images[currentImageIndex]?.secure_url || machine.images[currentImageIndex] || ''}
               alt={`${machine.title} - Image ${currentImageIndex + 1}`}
               loading="lazy"
             />

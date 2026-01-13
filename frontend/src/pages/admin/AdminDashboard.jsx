@@ -1,48 +1,36 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getMachines, getEnquiries, getParts, getBlogs } from '@/lib/api';
+import { getDashboardCounts, getEnquiries } from '@/lib/api';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    machines: 0,
-    parts: 0,
-    blogs: 0,
-    enquiries: 0
-  });
+  const [stats, setStats] = useState(null);
   const [recentEnquiries, setRecentEnquiries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      const token = localStorage.getItem('token') || '';
+    const fetchDashboardData = async () => {
+      setIsLoading(true);
+      setHasError(false);
       try {
-        const [machines, parts, blogs, enquiries] = await Promise.all([
-          getMachines(token),
-          getParts(token),
-          getBlogs(token),
-          getEnquiries(token)
+        const [countsData, enquiriesData] = await Promise.all([
+          getDashboardCounts(),
+          getEnquiries()
         ]);
-        const safeMachines = machines || [];
-        const safeParts = parts || [];
-        const safeBlogs = blogs || [];
-        const safeEnquiries = enquiries || [];
 
-        setStats({
-          machines: safeMachines.length,
-          parts: safeParts.length,
-          blogs: safeBlogs.length,
-          enquiries: safeEnquiries.length
-        });
-
-        setRecentEnquiries(safeEnquiries.slice(0, 5));
+        setStats(countsData);
+        if (Array.isArray(enquiriesData)) {
+          setRecentEnquiries(enquiriesData.slice(0, 5));
+        }
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error('Error fetching dashboard data:', error);
+        setHasError(true);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchStats();
+    fetchDashboardData();
   }, []);
 
   if (isLoading) {
@@ -69,7 +57,7 @@ export default function AdminDashboard() {
             </svg>
           </div>
           <div className="stat-content">
-            <span className="stat-number">{stats.machines}</span>
+            <span className="stat-number">{hasError ? '--' : stats?.machines ?? 0}</span>
             <span className="stat-label">Machines</span>
           </div>
         </div>
@@ -81,7 +69,7 @@ export default function AdminDashboard() {
             </svg>
           </div>
           <div className="stat-content">
-            <span className="stat-number">{stats.parts}</span>
+            <span className="stat-number">{hasError ? '--' : stats?.parts ?? 0}</span>
             <span className="stat-label">Used Parts</span>
           </div>
         </div>
@@ -94,7 +82,7 @@ export default function AdminDashboard() {
             </svg>
           </div>
           <div className="stat-content">
-            <span className="stat-number">{stats.blogs}</span>
+            <span className="stat-number">{hasError ? '--' : stats?.blogs ?? 0}</span>
             <span className="stat-label">Blog Posts</span>
           </div>
         </div>
@@ -106,7 +94,7 @@ export default function AdminDashboard() {
             </svg>
           </div>
           <div className="stat-content">
-            <span className="stat-number">{stats.enquiries}</span>
+            <span className="stat-number">{hasError ? '--' : stats?.enquiries ?? 0}</span>
             <span className="stat-label">Enquiries</span>
           </div>
         </div>
