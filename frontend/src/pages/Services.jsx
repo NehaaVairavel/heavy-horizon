@@ -26,12 +26,12 @@ export default function Services() {
   return (
     <Layout>
       {/* Page Header */}
-      <section className="section-dark page-header">
+      <section className="section-dark page-header" style={{ textAlign: 'center' }}>
         <div className="container">
-          <span className="section-label">Our Services</span>
+          <span className="section-label" style={{ background: 'rgba(224, 122, 24, 0.2)', marginBottom: '16px' }}>Our Services</span>
           <h1 className="section-title">Equipment <span>Rental Services</span></h1>
-          <p>
-            Choose from our range of well-maintained construction equipment available for rental. 
+          <p style={{ margin: '20px auto 0', maxWidth: '700px', color: 'rgba(255, 255, 255, 0.7)' }}>
+            Choose from our range of well-maintained construction equipment available for rental.
             Flexible terms to suit your project needs in Chennai.
           </p>
         </div>

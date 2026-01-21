@@ -26,12 +26,12 @@ export default function Sales() {
   return (
     <Layout>
       {/* Page Header */}
-      <section className="section-dark page-header">
+      <section className="section-dark page-header" style={{ textAlign: 'center' }}>
         <div className="container">
-          <span className="section-label">Equipment Sales</span>
+          <span className="section-label" style={{ background: 'rgba(224, 122, 24, 0.2)', marginBottom: '16px' }}>Equipment Sales</span>
           <h1 className="section-title">Buy Quality <span>Equipment</span></h1>
-          <p>
-            Own premium construction equipment. Our machines are well-maintained 
+          <p style={{ margin: '20px auto 0', maxWidth: '700px', color: 'rgba(255, 255, 255, 0.7)' }}>
+            Own premium construction equipment. Our machines are well-maintained
             and ready for years of reliable performance.
           </p>
         </div>

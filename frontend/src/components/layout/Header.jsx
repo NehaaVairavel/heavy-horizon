@@ -37,12 +37,14 @@ export function Header() {
     <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
       <div className="container">
         <Link to="/" className="logo">
-          <img src="/logo.png" alt="Heavy Horizon" className="logo-image" style={{ height: '45px', width: 'auto', objectFit: 'contain', backgroundColor: 'white', padding: '4px', borderRadius: '6px' }} />
+          <div className="logo-icon">
+            <img src="/logo.png" alt="H" />
+          </div>
           <div className="logo-text">
-            <span className="logo-name" style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-              <span>Heavy</span>
-              <span style={{ color: '#f97316' }}>Horizon</span>
+            <span className="logo-name">
+              Heavy <span>Horizon</span>
             </span>
+            <span className="logo-tagline">Equipment Solutions • Chennai</span>
           </div>
         </Link>
 

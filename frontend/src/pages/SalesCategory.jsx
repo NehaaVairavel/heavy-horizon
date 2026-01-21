@@ -19,7 +19,8 @@ const categoryInfo = {
   'backhoe-breakers': {
     title: 'Backhoe Loaders with Breakers',
     category: 'Backhoe Loader with Breaker',
-    description: 'Backhoe loaders with hydraulic breakers for specialized work.',
+    description: 'Backhoe loaders equipped with hydraulic breakers for rock breaking and hard surface demolition.',
+    image: 'https://res.cloudinary.com/dgchj39y2/image/upload/v1737471649/heavy_horizon/categories/backhoe-breaker-category.jpg',
   },
 };
 
@@ -81,7 +82,14 @@ export default function SalesCategory() {
   return (
     <Layout>
       {/* Page Header */}
-      <section className="section-dark page-header">
+      <section
+        className="section-dark page-header"
+        style={info.image ? {
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${info.image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        } : {}}
+      >
         <div className="container">
           <div className="breadcrumb">
             <Link to="/sales">Sales</Link>

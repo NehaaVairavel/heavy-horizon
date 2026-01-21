@@ -66,94 +66,101 @@ const features = [
 export default function Index() {
   return (
     <Layout>
-      {/* Hero Section */}
+      {/* 1. Hero Section - Dark Theme as per Image 0 */}
       <section className="hero">
         <div className="hero-bg" style={{ backgroundImage: `url(${heroImage})` }}>
-          <div className="hero-overlay" />
+          <div className="hero-overlay" style={{ background: 'linear-gradient(to right, rgba(28, 28, 28, 0.9) 0%, rgba(224, 122, 24, 0.3) 100%)' }} />
         </div>
-        
+
         <div className="container">
           <div className="hero-content">
             <div className="hero-badge">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" width="16" height="16">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
               </svg>
-              Trusted Equipment Partner
+              TRUSTED EQUIPMENT PARTNER
             </div>
-            
+
             <h1 className="hero-title">
-              Reliable Earthwork & <br />
-              <span>Construction</span> Equipment
+              RELIABLE EARTHWORK & <br />
+              <span>CONSTRUCTION</span> EQUIPMENT
             </h1>
-            
+
             <p className="hero-description">
-              Premium backhoe loaders and excavators for rent and sale. 
+              Premium backhoe loaders and excavators for rent and sale.
               Well-maintained machines for all your earthwork and construction needs.
             </p>
-            
+
             <p className="hero-location">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" width="20" height="20">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
               </svg>
               Chennai, Tamil Nadu
             </p>
-            
+
             <div className="hero-buttons">
               <Link to="/services" className="btn btn-primary btn-lg">
-                Our Services
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" width="20" height="20">
+                OUR SERVICES
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" width="20" height="20">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </Link>
               <Link to="/contact" className="btn btn-outline btn-lg">
-                Contact Us
+                CONTACT US
               </Link>
             </div>
           </div>
         </div>
-        
+
         <div className="scroll-indicator">
-          <span>Scroll to explore</span>
+          <span>SCROLL TO EXPLORE</span>
           <div className="scroll-mouse">
             <div className="scroll-dot" />
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section className="section">
+      {/* 2. About Section - White Theme as per Image 1 */}
+      <section className="section section-white">
         <div className="container">
-          <div className="grid-2" style={{ alignItems: 'center' }}>
-            <div>
-              <span className="section-label">About Us</span>
+          <div className="grid-2" style={{ alignItems: 'center', gap: '80px', gridTemplateColumns: '1fr 1.2fr' }}>
+            <div className="about-content">
+              <span className="section-label">ABOUT US</span>
               <h2 className="section-title">
-                Your Trusted Partner in <span>Heavy Equipment</span>
+                YOUR TRUSTED PARTNER IN <br />
+                <span>HEAVY EQUIPMENT</span>
               </h2>
-              <p style={{ color: 'var(--muted-foreground)', marginBottom: 24, lineHeight: 1.7 }}>
-                Heavy Horizon provides well-maintained backhoe loaders and excavators 
-                for rental and sale across Chennai and nearby regions. We focus on 
+              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginBottom: '20px', lineHeight: '1.7' }}>
+                Heavy Horizon provides well-maintained backhoe loaders and excavators
+                for rental and sale across Chennai and nearby regions. We focus on
                 reliability, performance, and customer satisfaction.
               </p>
-              <p style={{ color: 'var(--muted-foreground)', marginBottom: 32, lineHeight: 1.7 }}>
-                With years of experience in the construction equipment industry, we 
-                understand the demands of modern construction projects. Our fleet is 
+              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginBottom: '32px', lineHeight: '1.7' }}>
+                With years of experience in the construction equipment industry, we
+                understand the demands of modern construction projects. Our fleet is
                 regularly serviced and maintained to ensure peak performance on your job site.
               </p>
-              <Link to="/contact" className="btn btn-outline-dark">
-                Get in Touch
+              <Link to="/contact" className="btn btn-outline-dark" style={{ padding: '12px 28px' }}>
+                GET IN TOUCH
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" width="16" height="16">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </Link>
             </div>
-            
-            <div className="grid-2">
-              {features.slice(0, 4).map((feature, index) => (
-                <div key={index} className="feature-card">
-                  <div className="feature-icon">{feature.icon}</div>
-                  <h3 className="feature-title">{feature.title}</h3>
-                  <p className="feature-text">{feature.description}</p>
+
+            <div className="features-grid-alt">
+              {features.map((feature, index) => (
+                <div key={index} className="feature-card-detailed">
+                  <div className="feature-icon" style={{ borderRadius: '10px', width: '40px', height: '40px', marginBottom: '16px' }}>
+                    {feature.icon}
+                  </div>
+                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', marginBottom: '8px', textTransform: 'uppercase' }}>
+                    {feature.title}
+                  </h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.8125rem', lineHeight: '1.5' }}>
+                    {feature.description}
+                  </p>
                 </div>
               ))}
             </div>
@@ -161,14 +168,14 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Equipment Overview */}
+      {/* 3. Our Equipment Section - White Theme as per Image 2 */}
       <section className="section section-muted">
         <div className="container">
-          <div className="section-header">
-            <span className="section-label">Our Equipment</span>
-            <h2 className="section-title">Premium <span>Machinery</span></h2>
+          <div className="section-header" style={{ textAlign: 'center', marginBottom: '60px' }}>
+            <span className="section-label" style={{ margin: '0 auto 16px' }}>OUR EQUIPMENT</span>
+            <h2 className="section-title" style={{ fontSize: '3rem' }}>PREMIUM <span>MACHINERY</span></h2>
           </div>
-          
+
           <div className="grid-3">
             {equipmentCategories.map((item, index) => (
               <EquipmentCard
@@ -176,7 +183,7 @@ export default function Index() {
                 title={item.title}
                 description={item.description}
                 path={item.path}
-                buttonText="View More"
+                buttonText="VIEW MORE"
                 imageKey={item.imageKey}
               />
             ))}
@@ -184,33 +191,33 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Why Choose Us */}
+      {/* 4. Why Choose Us - Dark Section as per Image 3 */}
       <section className="section section-dark">
         <div className="container">
-          <div className="section-header">
-            <span className="section-label">Why Heavy Horizon</span>
-            <h2 className="section-title">Why <span>Choose Us</span></h2>
+          <div className="section-header" style={{ textAlign: 'center', marginBottom: '60px' }}>
+            <span className="section-label" style={{ margin: '0 auto 16px', background: 'rgba(255, 255, 255, 0.1)', color: 'var(--primary)' }}>WHY HEAVY HORIZON</span>
+            <h2 className="section-title" style={{ color: 'var(--white)', fontSize: '3rem' }}>WHY <span>CHOOSE US</span></h2>
           </div>
-          
-          <div className="grid-3" style={{ textAlign: 'center' }}>
+
+          <div className="grid-3" style={{ textAlign: 'center', gap: '40px' }}>
             {features.slice(0, 3).map((feature, index) => (
-              <div key={index}>
-                <div className="feature-icon" style={{ margin: '0 auto 20px' }}>
+              <div key={index} className="why-us-item">
+                <div className="feature-icon" style={{ margin: '0 auto 24px', width: '64px', height: '64px', background: 'var(--primary)', color: 'var(--white)' }}>
                   {feature.icon}
                 </div>
-                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', marginBottom: 12 }}>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', marginBottom: '16px', textTransform: 'uppercase', color: 'var(--white)' }}>
                   {feature.title}
                 </h3>
-                <p style={{ color: 'var(--muted-foreground)', fontSize: '0.875rem', lineHeight: 1.7 }}>
+                <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '1rem', lineHeight: '1.7', maxWidth: '300px', margin: '0 auto' }}>
                   {feature.description}
                 </p>
               </div>
             ))}
           </div>
-          
-          <div style={{ textAlign: 'center', marginTop: 48 }}>
-            <Link to="/contact" className="btn btn-primary btn-lg">
-              Get Started Today
+
+          <div style={{ textAlign: 'center', marginTop: '60px' }}>
+            <Link to="/contact" className="btn btn-primary btn-lg" style={{ padding: '16px 40px' }}>
+              GET STARTED TODAY
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" width="20" height="20">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
