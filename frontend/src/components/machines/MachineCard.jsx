@@ -90,9 +90,9 @@ export function MachineCard({ machine, onEnquiry, showStatus = false }) {
       </div>
 
       <div className="card-body">
-        <h3 className="card-title">{machine.title}</h3>
+        <h3 className="card-title" style={{ marginBottom: '8px' }}>{machine.title}</h3>
 
-        <div className="card-specs">
+        <div className="card-specs" style={{ marginBottom: '12px', gap: '8px' }}>
           <div className="spec-item">
             <label>Model</label>
             <span>{machine.model}</span>

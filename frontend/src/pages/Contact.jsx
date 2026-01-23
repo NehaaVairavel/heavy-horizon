@@ -7,6 +7,7 @@ export default function Contact() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
+    name: '',
     message: '',
     mobile: '',
     email: '',
@@ -15,6 +16,10 @@ export default function Contact() {
 
   const validateForm = () => {
     const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
 
     if (!formData.message.trim()) {
       newErrors.message = 'Please enter your requirement';
@@ -44,6 +49,7 @@ export default function Contact() {
     try {
       const enquiryData = {
         type: 'Contact',
+        name: formData.name.trim(),
         message: formData.message.trim(),
         mobile: formData.mobile.trim(),
         email: formData.email.trim() || undefined,
@@ -58,10 +64,10 @@ export default function Contact() {
 
       // Construct WhatsApp URL client-side
       const ADMIN_PHONE = '916379432565';
-      const text = encodeURIComponent(`New Enquiry from Website:\n\nMessage: ${formData.message}\nMobile: ${formData.mobile}\nEmail: ${formData.email || 'N/A'}`);
+      const text = encodeURIComponent(`Hello Heavy Horizon,\nName: ${formData.name.trim()}\nI’m interested in your services.\nPlease contact me.`);
       window.open(`https://wa.me/${ADMIN_PHONE}?text=${text}`, '_blank');
 
-      setFormData({ message: '', mobile: '', email: '' });
+      setFormData({ name: '', message: '', mobile: '', email: '' });
       setErrors({});
     } catch (error) {
       toast({
@@ -99,6 +105,19 @@ export default function Contact() {
               </h2>
 
               <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label className="form-label">
+                    Full Name <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-input ${errors.name ? 'error' : ''}`}
+                    placeholder="Enter your full name"
+                    value={formData.name}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                  />
+                  {errors.name && <p className="form-error">{errors.name}</p>}
+                </div>
                 <div className="form-group">
                   <label className="form-label">
                     Requirement Details <span className="required">*</span>

@@ -124,7 +124,7 @@ export function BlogCard({ blog }) {
                         </Link>
                     </h3>
 
-                    <div className="card-specs" style={{ marginBottom: isExpanded ? '16px' : '8px' }}>
+                    <div className="card-specs" style={{ marginBottom: isExpanded ? '12px' : '6px' }}>
                         {getBlogDate(blog) !== 'Recent' && (
                             <div className="spec-item">
                                 <label>Published On</label>
@@ -140,7 +140,7 @@ export function BlogCard({ blog }) {
                             overflow: 'hidden',
                             transition: 'all 0.5s ease-in-out',
                             position: 'relative',
-                            marginBottom: isExpanded ? '24px' : '16px'
+                            marginBottom: isExpanded ? '16px' : '10px'
                         }}
                     >
                         <p style={{
@@ -157,7 +157,7 @@ export function BlogCard({ blog }) {
                         </p>
                     </div>
 
-                    <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
+                    <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid var(--border)' }}>
                         <button
                             onClick={(e) => { e.preventDefault(); setIsExpanded(!isExpanded); }}
                             className="btn-link"

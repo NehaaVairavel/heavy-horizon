@@ -230,13 +230,20 @@ def delete_blog(id):
 # ---------------- ENQUIRIES ----------------
 @app.route("/api/enquiry", methods=["POST"])
 def enquiry():
-    enquiries.insert_one(request.json)
+    data = request.json
+    data["createdAt"] = datetime.utcnow().isoformat()
+    enquiries.insert_one(data)
     return jsonify({"message": "Enquiry submitted"})
 
 @app.route("/admin/enquiries", methods=["GET"])
 @token_required
 def get_enquiries():
-    return jsonify([{**e, "_id": str(e["_id"])} for e in enquiries.find()])
+    # Sort by createdAt desc, fallback to _id if createdAt missing
+    data = []
+    for e in enquiries.find().sort([("createdAt", -1), ("_id", -1)]):
+        e["_id"] = str(e["_id"])
+        data.append(e)
+    return jsonify(data)
 
 # ---------------- DASHBOARD STATS ----------------
 @app.route("/admin/dashboard/counts", methods=["GET"])

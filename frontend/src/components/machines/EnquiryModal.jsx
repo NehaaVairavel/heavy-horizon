@@ -6,6 +6,7 @@ export function EnquiryModal({ isOpen, onClose, machine, enquiryType }) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
+    name: '',
     message: '',
     mobile: '',
     email: '',
@@ -14,6 +15,10 @@ export function EnquiryModal({ isOpen, onClose, machine, enquiryType }) {
 
   const validateForm = () => {
     const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
 
     if (!formData.message.trim()) {
       newErrors.message = 'Please enter your requirement';
@@ -43,6 +48,7 @@ export function EnquiryModal({ isOpen, onClose, machine, enquiryType }) {
     try {
       const enquiryData = {
         type: enquiryType,
+        name: formData.name.trim(),
         machine: machine?.title,
         condition: machine?.condition,
         message: formData.message.trim(),
@@ -57,9 +63,12 @@ export function EnquiryModal({ isOpen, onClose, machine, enquiryType }) {
         description: 'Redirecting you to WhatsApp...',
       });
 
-      window.open(response.whatsapp, '_blank');
+      const ADMIN_PHONE = '916379432565';
+      const itemName = machine?.title || machine?.name || enquiryType || 'your services';
+      const text = encodeURIComponent(`Hello Heavy Horizon,\nName: ${formData.name.trim()}\nI’m interested in ${itemName}.\nPlease contact me.`);
+      window.open(`https://wa.me/${ADMIN_PHONE}?text=${text}`, '_blank');
 
-      setFormData({ message: '', mobile: '', email: '' });
+      setFormData({ name: '', message: '', mobile: '', email: '' });
       setErrors({});
       onClose();
     } catch (error) {
@@ -94,6 +103,19 @@ export function EnquiryModal({ isOpen, onClose, machine, enquiryType }) {
 
         <div className="modal-body">
           <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label className="form-label">
+                Full Name <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                className={`form-input ${errors.name ? 'error' : ''}`}
+                placeholder="Enter your full name"
+                value={formData.name}
+                onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+              />
+              {errors.name && <p className="form-error">{errors.name}</p>}
+            </div>
             <div className="form-group">
               <label className="form-label">
                 Requirement / Query <span className="required">*</span>

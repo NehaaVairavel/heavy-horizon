@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { getDashboardCounts } from '@/lib/api';
 import '@/styles/admin.css';
 
 export default function AdminLayout() {
@@ -9,6 +10,26 @@ export default function AdminLayout() {
   const location = useLocation();
 
   const { token, logout } = useAuth();
+  const [counts, setCounts] = useState({ enquiries: 0 });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const data = await getDashboardCounts();
+        if (data) setCounts(data);
+      } catch (err) {
+        console.error('Error fetching counts:', err);
+      }
+    };
+
+    if (token) {
+      fetchCounts();
+      // Optional: Refresh count every 30 seconds for "real-time" feel
+      const interval = setInterval(fetchCounts, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [token]);
 
   const handleLogout = () => {
     logout();
@@ -54,7 +75,14 @@ export default function AdminLayout() {
               className={`admin-nav-item ${isActive(item.path) ? 'active' : ''}`}
             >
               <span className="nav-icon">{getIcon(item.icon)}</span>
-              {sidebarOpen && <span className="nav-label">{item.label}</span>}
+              {sidebarOpen && (
+                <span className="nav-label">
+                  {item.label}
+                  {item.icon === 'enquiries' && counts.enquiries > 0 && (
+                    <span className="enquiry-badge">{counts.enquiries}</span>
+                  )}
+                </span>
+              )}
             </Link>
           ))}
         </nav>

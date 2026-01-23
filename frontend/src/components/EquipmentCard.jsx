@@ -19,7 +19,7 @@ export function EquipmentCard({ title, description, path, buttonText, imageKey }
       </div>
       <div className="card-body">
         <h3 className="card-title" style={{ textTransform: 'uppercase' }}>{title}</h3>
-        <p className="card-description" style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '20px' }}>
+        <p className="card-description" style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
           {description}
         </p>
         <div style={{ color: 'var(--primary)', fontWeight: '600', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '4px' }}>

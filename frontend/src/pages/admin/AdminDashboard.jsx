@@ -111,20 +111,27 @@ export default function AdminDashboard() {
             <thead>
               <tr>
                 <th>Type</th>
+                <th>Name</th>
                 <th>Item</th>
                 <th>Mobile</th>
                 <th>Date</th>
               </tr>
             </thead>
             <tbody>
-              {(recentEnquiries || []).map((enquiry, index) => (
-                <tr key={enquiry.id || index}>
-                  <td><span className={`badge badge-${enquiry.type?.toLowerCase()}`}>{enquiry.type}</span></td>
-                  <td>{enquiry.machine || enquiry.part || 'N/A'}</td>
-                  <td>{enquiry.mobile}</td>
-                  <td>{enquiry._id && enquiry._id.length >= 8 ? new Date(parseInt(enquiry._id.substring(0, 8), 16) * 1000).toLocaleDateString('en-IN') : (enquiry.created_at ? new Date(enquiry.created_at).toLocaleDateString('en-IN') : 'N/A')}</td>
-                </tr>
-              ))}
+              {(recentEnquiries || []).map((enquiry, index) => {
+                const date = enquiry.createdAt ? new Date(enquiry.createdAt) : (enquiry._id && enquiry._id.length >= 8 ? new Date(parseInt(enquiry._id.substring(0, 8), 16) * 1000) : null);
+                const formattedDate = date ? `${date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })} • ${date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase()}` : 'N/A';
+
+                return (
+                  <tr key={enquiry.id || index}>
+                    <td><span className={`badge badge-${enquiry.type?.toLowerCase()}`}>{enquiry.type}</span></td>
+                    <td>{enquiry.name || '-'}</td>
+                    <td>{enquiry.machine || enquiry.part || 'N/A'}</td>
+                    <td>{enquiry.mobile}</td>
+                    <td>{formattedDate}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
