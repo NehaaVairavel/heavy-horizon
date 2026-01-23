@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getEnquiries } from '@/lib/api';
+import { getEnquiries, markEnquiriesAsRead } from '@/lib/api';
 
 export default function AdminEnquiries() {
   const [enquiries, setEnquiries] = useState([]);
@@ -7,7 +7,18 @@ export default function AdminEnquiries() {
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
+    const handleReadEnquiries = async () => {
+      try {
+        await markEnquiriesAsRead();
+        // Dispatch custom event to notify AdminLayout to fetch fresh counts
+        window.dispatchEvent(new CustomEvent('enquiriesMarkedRead'));
+      } catch (err) {
+        console.error("Failed to mark enquiries as read", err);
+      }
+    };
+
     fetchEnquiries();
+    handleReadEnquiries();
   }, []);
 
   const fetchEnquiries = async () => {

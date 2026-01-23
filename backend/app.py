@@ -232,6 +232,7 @@ def delete_blog(id):
 def enquiry():
     data = request.json
     data["createdAt"] = datetime.utcnow().isoformat()
+    data["isRead"] = False
     enquiries.insert_one(data)
     return jsonify({"message": "Enquiry submitted"})
 
@@ -245,6 +246,15 @@ def get_enquiries():
         data.append(e)
     return jsonify(data)
 
+@app.route("/admin/enquiries/mark-read", methods=["POST"])
+@token_required
+def mark_enquiries_read():
+    try:
+        enquiries.update_many({"isRead": False}, {"$set": {"isRead": True}})
+        return jsonify({"message": "Enquiries marked as read"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # ---------------- DASHBOARD STATS ----------------
 @app.route("/admin/dashboard/counts", methods=["GET"])
 @token_required
@@ -254,15 +264,16 @@ def get_dashboard_counts():
         m_count = machines.count_documents({})
         p_count = parts.count_documents({})
         b_count = blogs.count_documents({})
-        e_count = enquiries.count_documents({})
+        # Count only unread enquiries for the notification badge
+        unread_e_count = enquiries.count_documents({"isRead": False})
         
-        print(f"DEBUG: Dashboard Counts - Machines: {m_count}, Parts: {p_count}, Blogs: {b_count}, Enquiries: {e_count}")
+        print(f"DEBUG: Dashboard Counts - Machines: {m_count}, Parts: {p_count}, Blogs: {b_count}, Unread Enquiries: {unread_e_count}")
         
         return jsonify({
             "machines": m_count,
             "parts": p_count,
             "blogs": b_count,
-            "enquiries": e_count
+            "enquiries": unread_e_count
         })
     except Exception as e:
         print(f"Error fetching dashboard counts: {e}")

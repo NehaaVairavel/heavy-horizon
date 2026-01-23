@@ -25,9 +25,16 @@ export default function AdminLayout() {
 
     if (token) {
       fetchCounts();
+
+      // Listen for custom event from AdminEnquiries page
+      window.addEventListener('enquiriesMarkedRead', fetchCounts);
+
       // Optional: Refresh count every 30 seconds for "real-time" feel
       const interval = setInterval(fetchCounts, 30000);
-      return () => clearInterval(interval);
+      return () => {
+        clearInterval(interval);
+        window.removeEventListener('enquiriesMarkedRead', fetchCounts);
+      };
     }
   }, [token]);
 

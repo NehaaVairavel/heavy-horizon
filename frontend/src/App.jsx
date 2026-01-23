@@ -11,6 +11,7 @@ import SalesCategory from "./pages/SalesCategory";
 import SpareParts from "./pages/SpareParts";
 import Blogs from "./pages/Blogs";
 import BlogDetail from "./pages/BlogDetail";
+import MachineDetail from "./pages/MachineDetail";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -46,8 +47,10 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/services" element={<Services />} />
             <Route path="/services/:category" element={<ServiceCategory />} />
+            <Route path="/services/machine/:id" element={<MachineDetail />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/sales/:category" element={<SalesCategory />} />
+            <Route path="/sales/machine/:id" element={<MachineDetail />} />
             <Route path="/spare-parts" element={<SpareParts />} />
             <Route path="/blogs" element={<Blogs />} />
             <Route path="/blogs/:id" element={<BlogDetail />} />

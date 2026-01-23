@@ -65,6 +65,11 @@ export const getMachines = async (type, category) => {
   return response.data;
 };
 
+export const getMachine = async (id) => {
+  const response = await api.get(`/api/machines/${id}`);
+  return response.data;
+};
+
 export const addMachine = async (machineData) => {
   const response = await api.post('/admin/machines', machineData);
   return response.data;
@@ -125,6 +130,11 @@ export const getEnquiries = async () => {
 
 export const getDashboardCounts = async () => {
   const response = await api.get('/admin/dashboard/counts');
+  return response.data;
+};
+
+export const markEnquiriesAsRead = async () => {
+  const response = await api.post('/admin/enquiries/mark-read');
   return response.data;
 };
 

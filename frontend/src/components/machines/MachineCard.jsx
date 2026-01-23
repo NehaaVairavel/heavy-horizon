@@ -1,8 +1,20 @@
 import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { normalizeImages } from '@/lib/images';
 
 export function MachineCard({ machine, onEnquiry, showStatus = false }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const isSales = location.pathname.startsWith('/sales');
+  const detailPath = isSales
+    ? `/sales/machine/${machine._id}`
+    : `/services/machine/${machine._id}`;
+
+  const handleCardClick = () => {
+    navigate(detailPath);
+  };
 
   // Robustly normalize images from any legacy format
   const normalizedImages = normalizeImages(machine?.images || machine?.image);
@@ -30,7 +42,7 @@ export function MachineCard({ machine, onEnquiry, showStatus = false }) {
   };
 
   return (
-    <div className="card">
+    <div className="card card-clickable" onClick={handleCardClick}>
       <div className="card-image">
         {hasImages ? (
           <div className="image-slider">
@@ -111,7 +123,10 @@ export function MachineCard({ machine, onEnquiry, showStatus = false }) {
           </div>
         </div>
 
-        <button className="btn btn-primary btn-block" onClick={() => onEnquiry(machine)}>
+        <button className="btn btn-primary btn-block" onClick={(e) => {
+          e.stopPropagation();
+          onEnquiry(machine);
+        }}>
           Send Enquiry
         </button>
       </div>
