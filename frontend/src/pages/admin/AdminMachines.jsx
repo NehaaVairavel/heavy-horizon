@@ -259,13 +259,14 @@ export default function AdminMachines() {
 
             <div className="form-row">
               <div className="admin-form-group">
-                <label>Condition *</label>
-                <input
-                  type="text"
+                <label>Condition (Add each point on a new line) *</label>
+                <textarea
                   value={formData.condition}
                   onChange={e => setFormData({ ...formData, condition: e.target.value })}
-                  placeholder="e.g., Good condition"
+                  placeholder="• Engine condition&#10;• Hydraulic system&#10;• Overall performance"
+                  rows={4}
                   required
+                  style={{ resize: 'vertical', minHeight: '100px' }}
                 />
               </div>
               <div className="admin-form-group">

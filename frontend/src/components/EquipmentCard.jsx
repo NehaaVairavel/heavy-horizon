@@ -9,16 +9,23 @@ export const equipmentImages = {
   'backhoe-breakers': 'https://res.cloudinary.com/dgchj39y2/image/upload/v1737471649/heavy_horizon/categories/backhoe-breaker-category.jpg',
 };
 
-export function EquipmentCard({ title, description, path, buttonText, imageKey }) {
+export function EquipmentCard({ title, description, path, buttonText, imageKey, count }) {
   const imageSrc = equipmentImages[imageKey] || jcbBackhoeImg;
 
   return (
     <Link to={path} className="card equipment-card">
       <div className="card-image">
         <img src={imageSrc} alt={`${title} equipment category`} loading="lazy" />
+        {count !== undefined && (
+          <div className="category-count-badge">
+            {count} {count === 1 ? 'Machine' : 'Machines'}
+          </div>
+        )}
       </div>
       <div className="card-body">
-        <h3 className="card-title" style={{ textTransform: 'uppercase' }}>{title}</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <h3 className="card-title" style={{ margin: 0, textTransform: 'uppercase' }}>{title}</h3>
+        </div>
         <p className="card-description" style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
           {description}
         </p>

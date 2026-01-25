@@ -183,7 +183,15 @@ export default function MachineDetail() {
                                     </div>
                                     <div className="spec-card">
                                         <span className="spec-label">4. CONDITION</span>
-                                        <span className="spec-value">{machine.condition || '-'}</span>
+                                        <div className="spec-value">
+                                            {machine.condition ? (
+                                                <ul className="spec-list">
+                                                    {machine.condition.split('\n').filter(line => line.trim()).map((line, i) => (
+                                                        <li key={i}>{line.replace(/^[•\d\.\-\*]\s*/, '').trim()}</li>
+                                                    ))}
+                                                </ul>
+                                            ) : '-'}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -89,7 +89,7 @@ export function MachineCard({ machine, onEnquiry }) {
           </div>
           <div className="card-spec-item">
             <span className="card-spec-label">CONDITION</span>
-            <span className="card-spec-value">{machine.condition || 'N/A'}</span>
+            <span className="card-spec-value">{machine.condition?.split('\n')[0].replace(/^[•\d\.\-\*]\s*/, '').trim() || 'N/A'}</span>
           </div>
         </div>
 

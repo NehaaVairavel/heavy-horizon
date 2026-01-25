@@ -2129,6 +2129,42 @@ textarea {
   transform: translateX(4px);
 }
 
+/* Category Count Badge */
+.category-count-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--primary);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.4);
+  z-index: 5;
+}
+
+/* Results Content Styles */
+.results-count-label {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.results-count-label span {
+  color: var(--primary);
+  font-weight: 700;
+}
+
 /* Page Transition Animations - Non-blocking */
 @keyframes slideInFromRight {
   from {
@@ -2579,6 +2615,36 @@ textarea {
   font-weight: 800;
   color: var(--secondary);
   font-family: var(--font-heading);
+}
+
+.spec-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.spec-list li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 1rem;
+  color: var(--secondary-light);
+  line-height: 1.5;
+  font-family: var(--font-body);
+  font-weight: 600;
+  text-transform: none;
+  /* Keep text case as entered */
+}
+
+.spec-list li::before {
+  content: "•";
+  color: var(--primary);
+  position: absolute;
+  left: 0;
+  font-size: 1.25rem;
+  top: -1px;
 }
 
 .detail-title-main {

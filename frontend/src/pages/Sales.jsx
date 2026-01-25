@@ -1,30 +1,55 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { EquipmentCard } from '@/components/EquipmentCard';
+import { getMachines } from '@/lib/api';
 
 const salesCategories = [
   {
     title: 'Backhoe Loaders',
-    description: 'Powerful and versatile machines ideal for excavation, loading, trenching, and earthwork operations.',
+    category: 'Backhoe Loader',
     path: '/sales/category/backhoe-loaders',
     imageKey: 'backhoe-loaders',
+    description: 'Powerful and versatile machines ideal for excavation, loading, trenching, and earthwork operations.',
   },
   {
     title: 'Excavators',
-    description: 'Heavy-duty excavators suitable for large-scale digging, demolition, and infrastructure projects.',
+    category: 'Excavator',
     path: '/sales/category/excavators',
     imageKey: 'excavators',
+    description: 'Heavy-duty excavators suitable for large-scale digging, demolition, and infrastructure projects.',
   },
   {
     title: 'Backhoe Loaders with Breakers',
-    description: 'Backhoe loaders equipped with hydraulic breakers for rock breaking and hard surface demolition.',
+    category: 'Backhoe Loader with Breaker',
     path: '/sales/category/backhoe-breakers',
     imageKey: 'backhoe-breakers',
+    description: 'Backhoe loaders equipped with hydraulic breakers for rock breaking and hard surface demolition.',
   },
 ];
 
 export default function Sales() {
+  const [counts, setCounts] = useState({});
+
   useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        // Fetch all machines with purpose 'Sales'
+        const data = await getMachines();
+        // Filter for Sales purpose
+        const salesMachines = data.filter(m => m.purpose === 'Sales' || m.type === 'Sales');
+
+        const newCounts = {};
+        salesCategories.forEach(cat => {
+          newCounts[cat.category] = salesMachines.filter(m => m.category === cat.category).length;
+        });
+        setCounts(newCounts);
+      } catch (error) {
+        console.error("Failed to fetch machine counts", error);
+      }
+    };
+
+    fetchCounts();
+
     const machinesSection = document.getElementById('machines-section');
     if (machinesSection) {
       const navbarHeight = 80;
@@ -69,6 +94,7 @@ export default function Sales() {
                 path={category.path}
                 buttonText="View Machines"
                 imageKey={category.imageKey}
+                count={counts[category.category]}
               />
             ))}
           </div>
