@@ -17,8 +17,25 @@ export function EquipmentCard({ title, description, path, buttonText, imageKey, 
       <div className="card-image">
         <img src={imageSrc} alt={`${title} equipment category`} loading="lazy" />
         {count !== undefined && (
-          <div className="category-count-badge">
-            {count} {count === 1 ? 'Machine' : 'Machines'}
+          <div className="category-count" style={{
+            position: 'absolute',
+            top: '12px',
+            right: '12px',
+            background: 'var(--white)',
+            color: 'var(--primary)',
+            fontWeight: '800',
+            fontSize: '1.25rem',
+            width: '42px',
+            height: '42px',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            zIndex: 2,
+            border: '1px solid rgba(217, 119, 6, 0.1)'
+          }}>
+            {count}
           </div>
         )}
       </div>

@@ -148,10 +148,27 @@ export default function MachineDetail() {
                         <div className="detail-main">
                             {/* Header Section directly below image */}
                             <div className="detail-header" style={{ marginBottom: 40 }}>
-                                <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
-                                    <span className="badge badge-sales" style={{ background: '#000', color: '#fff', fontSize: '0.65rem' }}>{machine.category?.toUpperCase()}</span>
-                                    <span className="badge badge-available">{machine.status || 'Available'}</span>
-                                    <span className="badge badge-rental" style={{ background: '#fef3c7', color: '#d97706' }}>FOR {purpose.toUpperCase()}</span>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                                    <div style={{ display: 'flex', gap: 10 }}>
+                                        <span className="badge badge-sales" style={{ background: '#000', color: '#fff', fontSize: '0.65rem' }}>{machine.category?.toUpperCase()}</span>
+                                        <span className="badge badge-available">{machine.status || 'Available'}</span>
+                                        <span className="badge badge-rental" style={{ background: '#fef3c7', color: '#d97706' }}>FOR {purpose.toUpperCase()}</span>
+                                    </div>
+                                    {machine.machineCode && (
+                                        <span className="machine-code-badge" style={{
+                                            fontSize: '0.85rem',
+                                            fontWeight: '700',
+                                            padding: '6px 14px',
+                                            backgroundColor: 'rgba(0, 0, 0, 0.03)',
+                                            border: '1px solid #e5e7eb',
+                                            color: '#6b7280',
+                                            borderRadius: '6px',
+                                            fontFamily: 'var(--font-heading)',
+                                            letterSpacing: '0.05em'
+                                        }}>
+                                            {machine.machineCode}
+                                        </span>
+                                    )}
                                 </div>
                                 <h1 className="detail-title-main">{machine.title}</h1>
                                 <p className="detail-subtitle-main">
@@ -160,47 +177,56 @@ export default function MachineDetail() {
                             </div>
 
                             <div className="detail-section" style={{ marginBottom: 48 }}>
-                                <h2 className="detail-section-title">About This Machine</h2>
-                                <p className="detail-description">
-                                    {machine.description || 'Comprehensive data for this machine is being compiled. Please contact us for a detailed inspection report and more performance specifications.'}
-                                </p>
+                                <h2 className="detail-section-title">Specifications</h2>
+                                <div className="specs-list-container" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                    {[
+                                        { label: 'Machine Code', value: machine.machineCode },
+                                        { label: 'Model', value: machine.model },
+                                        { label: 'Year', value: machine.year },
+                                        { label: 'Hours', value: machine.hours ? machine.hours.toLocaleString() : null },
+                                        { label: 'Location', value: machine.location }
+                                    ].map((spec, i) => (
+                                        <div key={i} className="spec-row" style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '12px', borderBottom: '1px solid #f3f4f6' }}>
+                                            <span style={{ fontWeight: '600', color: '#6b7280', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{spec.label}</span>
+                                            <span style={{ fontWeight: '700', color: '#111827' }}>{spec.value || '-'}</span>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
 
                             <div className="detail-section">
-                                <h2 className="detail-section-title">Specifications</h2>
-                                <div className="specs-grid">
-                                    <div className="spec-card">
-                                        <span className="spec-label">1. MODEL</span>
-                                        <span className="spec-value">{machine.model || '-'}</span>
-                                    </div>
-                                    <div className="spec-card">
-                                        <span className="spec-label">2. YEAR</span>
-                                        <span className="spec-value">{machine.year || '-'}</span>
-                                    </div>
-                                    <div className="spec-card">
-                                        <span className="spec-label">3. OPERATING HOURS</span>
-                                        <span className="spec-value">{machine.hours ? machine.hours.toLocaleString() : '-'}</span>
-                                    </div>
-                                    <div className="spec-card">
-                                        <span className="spec-label">4. CONDITION</span>
-                                        <div className="spec-value">
-                                            {machine.condition ? (() => {
-                                                const lines = machine.condition.split('\n').filter(line => line.trim());
-                                                const isNumbered = lines.some(line => /^\d+\./.test(line.trim()));
-                                                const ListTag = isNumbered ? 'ol' : 'ul';
-
-                                                return (
-                                                    <ListTag className={`spec-list ${isNumbered ? 'numbered' : ''}`}>
-                                                        {lines.map((line, i) => (
-                                                            <li key={i}>{line.replace(/^([•\-\*]|\d+\.)\s*/, '').trim()}</li>
-                                                        ))}
-                                                    </ListTag>
-                                                );
-                                            })() : '-'}
-                                        </div>
-                                    </div>
+                                <h2 className="detail-section-title">Description</h2>
+                                <div className="description-content" style={{ fontSize: '1.05rem', color: '#374151', lineHeight: '1.6' }}>
+                                    {machine.condition ? (
+                                        <div
+                                            className="rich-text-container"
+                                            dangerouslySetInnerHTML={{ __html: machine.condition }}
+                                        />
+                                    ) : (
+                                        <p style={{ color: '#6b7280', fontStyle: 'italic' }}>No description available.</p>
+                                    )}
                                 </div>
                             </div>
+
+                            <style dangerouslySetInnerHTML={{
+                                __html: `
+                                .rich-text-container ul, .rich-text-container ol {
+                                    padding-left: 20px;
+                                    margin-bottom: 16px;
+                                }
+                                .rich-text-container ul { list-style-type: disc; }
+                                .rich-text-container ol { list-style-type: decimal; }
+                                .rich-text-container li { margin-bottom: 8px; }
+                                .rich-text-container p { margin-bottom: 12px; }
+                                .rich-text-container h1, .rich-text-container h2, .rich-text-container h3 { 
+                                    margin: 20px 0 10px; 
+                                    font-family: var(--font-heading);
+                                    text-transform: uppercase;
+                                }
+                                .rich-text-container b, .rich-text-container strong { fontWeight: 700; }
+                                .rich-text-container i, .rich-text-container em { fontStyle: italic; }
+                                .rich-text-container u { textDecoration: underline; }
+                            `}} />
                         </div>
 
                         <aside className="detail-sidebar">

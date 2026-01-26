@@ -99,14 +99,14 @@ export default function SalesCategory() {
           <span className="section-label">For Sale</span>
           <h1 className="section-title">{info.title.split(' ')[0]} <span>{info.title.split(' ').slice(1).join(' ') || 'For Sale'}</span></h1>
           <p>{info.description}</p>
-          <div className="results-count-label">
-            {machines.length > 0 ? (
-              <>
-                <span>{machines.length}</span> {machines.length === 1 ? 'machine' : 'machines'} available
-              </>
-            ) : (
-              "No machines available in this category"
-            )}
+          <div className="results-count-label" style={{
+            marginTop: '16px',
+            fontSize: '2.5rem',
+            fontWeight: '800',
+            color: 'var(--primary)',
+            lineHeight: 1
+          }}>
+            {machines.length}
           </div>
         </div>
       </section>

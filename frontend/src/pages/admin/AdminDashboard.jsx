@@ -95,7 +95,7 @@ export default function AdminDashboard() {
             </svg>
           </div>
           <div className="stat-content">
-            <span className="stat-number">{hasError ? '--' : stats?.enquiries ?? 0}</span>
+            <span className="stat-number">{hasError ? '--' : stats?.totalEnquiries ?? stats?.enquiries ?? 0}</span>
             <span className="stat-label">Enquiries</span>
           </div>
         </div>

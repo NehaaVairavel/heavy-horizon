@@ -75,6 +75,11 @@ export const addMachine = async (machineData) => {
   return response.data;
 };
 
+export const updateMachine = async (id, machineData) => {
+  const response = await api.put(`/admin/machines/${id}`, machineData);
+  return response.data;
+};
+
 export const deleteMachine = async (id) => {
   const response = await api.delete(`/admin/machines/${id}`);
   return response.data;

@@ -10,7 +10,7 @@ export default function AdminLayout() {
   const location = useLocation();
 
   const { token, logout } = useAuth();
-  const [counts, setCounts] = useState({ enquiries: 0 });
+  const [counts, setCounts] = useState({ unreadEnquiries: 0, totalEnquiries: 0 });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -85,8 +85,8 @@ export default function AdminLayout() {
               {sidebarOpen && (
                 <span className="nav-label">
                   {item.label}
-                  {item.icon === 'enquiries' && counts.enquiries > 0 && (
-                    <span className="enquiry-badge">{counts.enquiries}</span>
+                  {item.icon === 'enquiries' && counts.unreadEnquiries > 0 && (
+                    <span className="enquiry-badge">{counts.unreadEnquiries}</span>
                   )}
                 </span>
               )}

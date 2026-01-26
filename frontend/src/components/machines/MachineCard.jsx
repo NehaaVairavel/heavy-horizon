@@ -72,7 +72,24 @@ export function MachineCard({ machine, onEnquiry }) {
       </div>
 
       <div className="card-body">
-        <h3 className="card-title">{machine.title}</h3>
+        <div className="card-header-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <h3 className="card-title" style={{ marginBottom: 0 }}>{machine.title}</h3>
+          {machine.machineCode && (
+            <span className="machine-code-badge" style={{
+              fontSize: '0.7rem',
+              fontWeight: '700',
+              padding: '4px 10px',
+              backgroundColor: 'rgba(0, 0, 0, 0.03)',
+              border: '1px solid #e5e7eb',
+              color: '#6b7280',
+              borderRadius: '4px',
+              fontFamily: 'var(--font-heading)',
+              letterSpacing: '0.05em'
+            }}>
+              {machine.machineCode}
+            </span>
+          )}
+        </div>
 
         <div className="card-specs-grid">
           <div className="card-spec-item">
@@ -88,8 +105,12 @@ export function MachineCard({ machine, onEnquiry }) {
             <span className="card-spec-value">{machine.hours?.toLocaleString() || 'N/A'}</span>
           </div>
           <div className="card-spec-item">
-            <span className="card-spec-label">CONDITION</span>
-            <span className="card-spec-value">{machine.condition?.split('\n')[0].replace(/^([•\-\*]|\d+\.)\s*/, '').trim() || 'N/A'}</span>
+            <span className="card-spec-label">DESCRIPTION</span>
+            <span className="card-spec-value">
+              {machine.condition
+                ? machine.condition.replace(/<[^>]*>/g, ' ').split('\n')[0].trim().substring(0, 30) + (machine.condition.length > 30 ? '...' : '')
+                : 'N/A'}
+            </span>
           </div>
         </div>
 

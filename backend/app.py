@@ -148,9 +148,37 @@ def get_machine(id):
 @token_required
 def add_machine():
     try:
-        print("Received add_machine request:", request.json)
-        machines.insert_one(request.json)
-        return jsonify({"message": "Machine added"})
+        data = request.json
+        print("Received add_machine request:", data)
+        
+        # Generate Machine Code
+        category = data.get("category", "")
+        prefix = ""
+        if category == "Backhoe Loader":
+            prefix = "BL"
+        elif category == "Excavator":
+            prefix = "EX"
+        
+        if prefix:
+            # Find the highest existing code for this prefix
+            last_machine = machines.find_one(
+                {"machineCode": {"$regex": f"^{prefix}-"}},
+                sort=[("machineCode", -1)]
+            )
+            
+            next_num = 1
+            if last_machine and "machineCode" in last_machine:
+                try:
+                    last_code = last_machine["machineCode"]
+                    last_num = int(last_code.split("-")[1])
+                    next_num = last_num + 1
+                except (IndexError, ValueError):
+                    pass
+            
+            data["machineCode"] = f"{prefix}-{next_num:04d}"
+        
+        machines.insert_one(data)
+        return jsonify({"message": "Machine added", "machineCode": data.get("machineCode")})
     except Exception as e:
         print("Error adding machine:", e)
         return jsonify({"error": str(e)}), 500
@@ -159,7 +187,11 @@ def add_machine():
 @token_required
 def update_delete_machine(id):
     if request.method == "PUT":
-        machines.update_one({"_id": ObjectId(id)}, {"$set": request.json})
+        data = request.json
+        # Prevent machineCode from being updated
+        if "machineCode" in data:
+            del data["machineCode"]
+        machines.update_one({"_id": ObjectId(id)}, {"$set": data})
         return jsonify({"message": "Machine updated"})
     
     # DELETE logic with Cloudinary cleanup
@@ -281,14 +313,16 @@ def get_dashboard_counts():
         b_count = blogs.count_documents({})
         # Count only unread enquiries for the notification badge
         unread_e_count = enquiries.count_documents({"isRead": False})
+        total_e_count = enquiries.count_documents({})
         
-        print(f"DEBUG: Dashboard Counts - Machines: {m_count}, Parts: {p_count}, Blogs: {b_count}, Unread Enquiries: {unread_e_count}")
+        print(f"DEBUG: Dashboard Counts - Machines: {m_count}, Parts: {p_count}, Blogs: {b_count}, Unread: {unread_e_count}, Total Enquiries: {total_e_count}")
         
         return jsonify({
             "machines": m_count,
             "parts": p_count,
             "blogs": b_count,
-            "enquiries": unread_e_count
+            "unreadEnquiries": unread_e_count,
+            "totalEnquiries": total_e_count
         })
     except Exception as e:
         print(f"Error fetching dashboard counts: {e}")

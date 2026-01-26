@@ -1,6 +1,38 @@
 import { useState, useEffect } from 'react';
-import { getMachines, addMachine, deleteMachine, uploadImages } from '@/lib/api';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import { getMachines, addMachine, deleteMachine, updateMachine, uploadImages } from '@/lib/api';
 import { normalizeImages } from '@/lib/images';
+
+// Quill Modules Configuration for a Word-like experience
+const quillModules = {
+  toolbar: [
+    [{ 'font': [] }, { 'size': [] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'color': [] }, { 'background': [] }],
+    [{ 'script': 'sub' }, { 'script': 'super' }],
+    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+    [{ 'indent': '-1' }, { 'indent': '+1' }],
+    [{ 'align': [] }],
+    ['clean'],
+    ['undo', 'redo']
+  ],
+  history: {
+    delay: 1000,
+    maxStack: 100,
+    userOnly: true
+  }
+};
+
+const quillFormats = [
+  'font', 'size',
+  'bold', 'italic', 'underline', 'strike',
+  'color', 'background',
+  'script',
+  'list', 'bullet', 'indent',
+  'align',
+  'clean'
+];
 
 const emptyMachine = {
   title: '',
@@ -9,9 +41,10 @@ const emptyMachine = {
   model: '',
   year: new Date().getFullYear(),
   hours: 0,
-  condition: 'Good Condition',
+  condition: '', // Used for Description
   images: [],
-  status: 'Available'
+  status: 'Available',
+  location: ''
 };
 
 export default function AdminMachines() {
@@ -27,12 +60,16 @@ export default function AdminMachines() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
 
   useEffect(() => {
     fetchMachines();
     return () => {
       // Cleanup preview URLs on unmount to prevent memory leaks
-      previewUrls.forEach(url => URL.revokeObjectURL(url));
+      previewUrls.forEach(url => {
+        if (url.startsWith('blob:')) URL.revokeObjectURL(url);
+      });
     };
   }, []);
 
@@ -62,31 +99,49 @@ export default function AdminMachines() {
     // Generate previews
     const newPreviews = files.map(file => {
       const url = URL.createObjectURL(file);
-      console.log(`DEBUG: Created preview URL for ${file.name}: ${url}`);
       return url;
     });
 
     // Update state
     setSelectedFiles(prev => [...prev, ...files]);
     setPreviewUrls(prev => [...prev, ...newPreviews]);
-    console.log("DEBUG: Current previewUrls:", [...previewUrls, ...newPreviews]);
 
     // Clear error if any
     setMessage({ type: '', text: '' });
   };
 
   const removeImage = (index) => {
-    // Revoke object URL
     const urlToRemove = previewUrls[index];
-    if (urlToRemove) URL.revokeObjectURL(urlToRemove);
 
-    // Remove from both arrays
+    // If it's a blob URL, revoke it
+    if (urlToRemove && urlToRemove.startsWith('blob:')) {
+      URL.revokeObjectURL(urlToRemove);
+
+      // Also remove from selectedFiles by finding its index among blob URLs
+      const blobIndex = previewUrls.slice(0, index).filter(u => u.startsWith('blob:')).length;
+      setSelectedFiles(prev => prev.filter((_, i) => i !== blobIndex));
+    } else {
+      // It's an existing image URL from the server
+      setFormData(prev => ({
+        ...prev,
+        images: prev.images.filter(u => u !== urlToRemove)
+      }));
+    }
+
     setPreviewUrls(prev => prev.filter((_, i) => i !== index));
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate Description (condition)
+    const isDescriptionEmpty = !formData.condition || formData.condition === '<p><br></p>' || formData.condition.trim() === '';
+    if (isDescriptionEmpty) {
+      setMessage({ type: 'error', text: 'Description is mandatory' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     setSaving(true);
     setMessage({ type: '', text: '' });
 
@@ -96,38 +151,41 @@ export default function AdminMachines() {
       // 1. Upload new files if any
       if (selectedFiles.length > 0) {
         setUploading(true);
-        const uploadedUrls = await uploadImages(selectedFiles);
-        if (Array.isArray(uploadedUrls)) {
-          uploadedImages = uploadedUrls;
-        } else if (uploadedUrls && uploadedUrls.images) {
-          // Fallback for different API response structure if any
-          uploadedImages = uploadedUrls.images;
-        }
+        const uploadRes = await uploadImages(selectedFiles);
+        uploadedImages = uploadRes.images || [];
         setUploading(false);
       }
 
       // 2. Prepare payload
-      // Note: In "Add Machine", we usually don't have existing images in formData.images
-      // But if we did (edit mode), we would merge them here.
+      // Combine existing images (if editing and not removed) with newly uploaded ones
+      const finalImages = [
+        ...(isEditing ? formData.images : []),
+        ...uploadedImages
+      ];
+
       const payload = {
         ...formData,
-        images: uploadedImages, // Array of string URLs
+        images: finalImages,
         year: Number(formData.year) || 0,
         hours: Number(formData.hours) || 0,
       };
 
-      console.log("DEBUG: Posting machine payload:", payload);
-      await addMachine(payload);
+      if (isEditing) {
+        await updateMachine(editId, payload);
+        setMessage({ type: 'success', text: 'Machine updated successfully' });
+      } else {
+        await addMachine(payload);
+        setMessage({ type: 'success', text: 'Machine added successfully' });
+      }
 
-      setMessage({ type: 'success', text: 'Machine added successfully' });
       handleReset();
       await fetchMachines();
 
     } catch (error) {
-      console.error("Error adding machine:", error);
+      console.error("Error saving machine:", error);
       setMessage({
         type: 'error',
-        text: error.response?.data?.error || error.message || "Failed to add machine"
+        text: error.response?.data?.error || error.message || "Failed to save machine"
       });
       setUploading(false);
     } finally {
@@ -136,13 +194,34 @@ export default function AdminMachines() {
   };
 
   const handleReset = () => {
-    // Cleanup previews
-    previewUrls.forEach(url => URL.revokeObjectURL(url));
+    // Cleanup blob previews only
+    previewUrls.forEach(url => {
+      if (url.startsWith('blob:')) URL.revokeObjectURL(url);
+    });
 
     setFormData(emptyMachine);
     setSelectedFiles([]);
     setPreviewUrls([]);
     setShowForm(false);
+    setIsEditing(false);
+    setEditId(null);
+  };
+
+  const handleEdit = (machine) => {
+    setFormData({
+      ...machine,
+      condition: machine.condition || ''
+    });
+    setEditId(machine._id);
+    setIsEditing(true);
+
+    // Set existing images as previews
+    const existingImages = normalizeImages(machine.images || machine.image);
+    setPreviewUrls(existingImages);
+    setSelectedFiles([]); // No new files yet
+
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = async (id) => {
@@ -157,11 +236,8 @@ export default function AdminMachines() {
     }
   };
 
-  // Helper to get a stable thumbnail for table
-  // Robustly normalize images from any legacy format
   const getThumbnail = (machine) => {
     const normalizedImages = normalizeImages(machine?.images || machine?.image);
-    console.log(`DEBUG: AdminMachines [${machine?.title}] normalizedImages:`, normalizedImages);
     return normalizedImages.length > 0 ? normalizedImages[0] : 'https://via.placeholder.com/60x40?text=No+Image';
   };
 
@@ -184,7 +260,7 @@ export default function AdminMachines() {
       {/* Add Machine Form */}
       {showForm && (
         <div className="admin-form-container">
-          <h2>Add New Machine</h2>
+          <h2>{isEditing ? 'Edit Machine' : 'Add New Machine'}</h2>
           <form onSubmit={handleSubmit} className="admin-form">
             <div className="form-row">
               <div className="admin-form-group">
@@ -255,21 +331,37 @@ export default function AdminMachines() {
                   required
                 />
               </div>
+              <div className="admin-form-group">
+                <label>Location *</label>
+                <input
+                  type="text"
+                  value={formData.location || ''}
+                  onChange={e => setFormData({ ...formData, location: e.target.value })}
+                  placeholder="e.g., Chennai, Tamil Nadu"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-row" style={{ display: 'block', marginBottom: '40px' }}>
+              <div className="admin-form-group" style={{ width: '100%' }}>
+                <label>Description *</label>
+                <div className="quill-editor-wrapper" style={{ background: 'white', minHeight: '300px' }}>
+                  <ReactQuill
+                    theme="snow"
+                    value={formData.condition}
+                    onChange={(content) => setFormData({ ...formData, condition: content })}
+                    modules={quillModules}
+                    formats={quillFormats}
+                    placeholder="Describe the machine's features, performance, and history..."
+                    style={{ height: '250px', marginBottom: '50px' }}
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="form-row">
-              <div className="admin-form-group">
-                <label>Condition (Add each point on a new line) *</label>
-                <textarea
-                  value={formData.condition}
-                  onChange={e => setFormData({ ...formData, condition: e.target.value })}
-                  placeholder="• Engine condition&#10;• Hydraulic system&#10;• Overall performance"
-                  rows={4}
-                  required
-                  style={{ resize: 'vertical', minHeight: '100px' }}
-                />
-              </div>
-              <div className="admin-form-group">
+              <div className="admin-form-group" style={{ width: '100%' }}>
                 <label>Status *</label>
                 <select
                   value={formData.status}
@@ -314,7 +406,7 @@ export default function AdminMachines() {
                 Cancel
               </button>
               <button type="submit" className="btn-admin-primary" disabled={saving || uploading}>
-                {saving || uploading ? 'Processing...' : 'Add Machine'}
+                {saving || uploading ? 'Processing...' : (isEditing ? 'Update Machine' : 'Add Machine')}
               </button>
             </div>
           </form>
@@ -364,6 +456,17 @@ export default function AdminMachines() {
                     </span>
                   </td>
                   <td>
+                    <button
+                      className="btn-icon edit"
+                      onClick={() => handleEdit(machine)}
+                      title="Edit"
+                      style={{ marginRight: 8, color: 'var(--primary)' }}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
+                    </button>
                     <button
                       className="btn-icon delete"
                       onClick={() => handleDelete(machine._id)}
