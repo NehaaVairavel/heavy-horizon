@@ -72,17 +72,17 @@ export function MachineCard({ machine, onEnquiry }) {
       </div>
 
       <div className="card-body">
-        <div className="card-header-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <h3 className="card-title" style={{ marginBottom: 0 }}>{machine.title}</h3>
+        <div className="card-header-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h3 className="card-title" style={{ marginBottom: 0, fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.02em' }}>{machine.title}</h3>
           {machine.machineCode && (
             <span className="machine-code-badge" style={{
-              fontSize: '0.7rem',
+              fontSize: '0.75rem',
               fontWeight: '700',
-              padding: '4px 10px',
-              backgroundColor: 'rgba(0, 0, 0, 0.03)',
-              border: '1px solid #e5e7eb',
-              color: '#6b7280',
-              borderRadius: '4px',
+              padding: '6px 12px',
+              backgroundColor: '#1f2937', // Dark background
+              border: '1.5px solid var(--primary)', // Orange border
+              color: 'var(--primary)', // Orange text
+              borderRadius: '6px',
               fontFamily: 'var(--font-heading)',
               letterSpacing: '0.05em'
             }}>
@@ -91,25 +91,36 @@ export function MachineCard({ machine, onEnquiry }) {
           )}
         </div>
 
-        <div className="card-specs-grid">
-          <div className="card-spec-item">
-            <span className="card-spec-label">MODEL</span>
-            <span className="card-spec-value">{machine.model || 'N/A'}</span>
+        <div className="card-specs-grid" style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '16px 24px',
+          marginBottom: '20px',
+          padding: '4px 0'
+        }}>
+          <div className="card-spec-item" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span className="card-spec-label" style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--muted-foreground)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>MODEL</span>
+            <span className="card-spec-value" style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--foreground)' }}>{machine.model || 'N/A'}</span>
           </div>
-          <div className="card-spec-item">
-            <span className="card-spec-label">YEAR</span>
-            <span className="card-spec-value">{machine.year || 'N/A'}</span>
+          <div className="card-spec-item" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span className="card-spec-label" style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--muted-foreground)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>YEAR</span>
+            <span className="card-spec-value" style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--foreground)' }}>{machine.year || 'N/A'}</span>
           </div>
-          <div className="card-spec-item">
-            <span className="card-spec-label">HOURS</span>
-            <span className="card-spec-value">{machine.hours?.toLocaleString() || 'N/A'}</span>
+          <div className="card-spec-item" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span className="card-spec-label" style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--muted-foreground)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>HOURS</span>
+            <span className="card-spec-value" style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--foreground)' }}>{machine.hours?.toLocaleString() || 'N/A'}</span>
           </div>
-          <div className="card-spec-item">
-            <span className="card-spec-label">DESCRIPTION</span>
-            <span className="card-spec-value">
-              {machine.condition
-                ? machine.condition.replace(/<[^>]*>/g, ' ').split('\n')[0].trim().substring(0, 30) + (machine.condition.length > 30 ? '...' : '')
-                : 'N/A'}
+          <div className="card-spec-item" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span className="card-spec-label" style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--muted-foreground)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>LOCATION</span>
+            <span className="card-spec-value" style={{
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              color: 'var(--muted-foreground)',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }} title={machine.location}>
+              {machine.location || 'Not specified'}
             </span>
           </div>
         </div>

@@ -157,7 +157,9 @@ def add_machine():
         if category == "Backhoe Loader":
             prefix = "BL"
         elif category == "Excavator":
-            prefix = "EX"
+            prefix = "EXE"
+        elif category == "Backhoe Loader with Breaker":
+            prefix = "BLB"
         
         if prefix:
             # Find the highest existing code for this prefix

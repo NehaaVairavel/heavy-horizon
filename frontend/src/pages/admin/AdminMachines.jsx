@@ -142,6 +142,13 @@ export default function AdminMachines() {
       return;
     }
 
+    // Validate Location
+    if (!formData.location || formData.location.trim().length < 2) {
+      setMessage({ type: 'error', text: 'Location is mandatory (min 2 characters)' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     setSaving(true);
     setMessage({ type: '', text: '' });
 
@@ -165,6 +172,8 @@ export default function AdminMachines() {
 
       const payload = {
         ...formData,
+        condition: formData.condition.trim(),
+        location: (formData.location || '').trim(),
         images: finalImages,
         year: Number(formData.year) || 0,
         hours: Number(formData.hours) || 0,
@@ -322,22 +331,22 @@ export default function AdminMachines() {
                 />
               </div>
               <div className="admin-form-group">
-                <label>Hours *</label>
-                <input
-                  type="number"
-                  value={formData.hours}
-                  onChange={e => setFormData({ ...formData, hours: parseInt(e.target.value) })}
-                  min="0"
-                  required
-                />
-              </div>
-              <div className="admin-form-group">
                 <label>Location *</label>
                 <input
                   type="text"
                   value={formData.location || ''}
                   onChange={e => setFormData({ ...formData, location: e.target.value })}
                   placeholder="e.g., Chennai, Tamil Nadu"
+                  required
+                />
+              </div>
+              <div className="admin-form-group">
+                <label>Hours *</label>
+                <input
+                  type="number"
+                  value={formData.hours}
+                  onChange={e => setFormData({ ...formData, hours: parseInt(e.target.value) })}
+                  min="0"
                   required
                 />
               </div>
