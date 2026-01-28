@@ -16,7 +16,10 @@ export function EnquiryModal({ isOpen, onClose, machine, enquiryType }) {
   // Fix scroll issue and visibility
   useEffect(() => {
     if (isOpen) {
-      // Lock scroll
+      // 1. Scroll to top (STRICT ORDER)
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // 2. Lock scroll
       const originalStyle = window.getComputedStyle(document.body).overflow;
       document.body.style.overflow = 'hidden';
 
@@ -57,8 +60,7 @@ export function EnquiryModal({ isOpen, onClose, machine, enquiryType }) {
 
     try {
       // 1. Prepare comprehensive data for DB
-      const machineName = `${machine?.title || ''} ${machine?.model || ''}`.trim();
-      const category = enquiryType === 'Rental' ? 'Our Services' : 'Sales';
+      const category = enquiryType === 'Rental' ? 'Our Services' : (enquiryType === 'Part' ? 'Spare Parts' : 'Sales');
 
       const enquiryData = {
         name: formData.name.trim(),
@@ -68,14 +70,16 @@ export function EnquiryModal({ isOpen, onClose, machine, enquiryType }) {
         type: enquiryType, // internal type
         category: category, // display category
         machine_id: machine?._id,
-        machine_code: machine?.machineCode || 'N/A',
-        machine_name: machine?.title || 'N/A',
+        machine_code: machine?.machineCode || machine?.code || 'N/A',
+        machine_name: machine?.title || machine?.name || 'N/A',
+        machine_brand: machine?.title || machine?.name || 'N/A', // storing brand
+        machine_category: machine?.category || (enquiryType === 'Part' ? 'Spare Part' : 'N/A'),
         model: machine?.model || 'N/A',
         location: machine?.location || 'Not specified',
         source_page: window.location.pathname
       };
 
-      // 2. Save to Database FIRST
+      // 2. Save to Database FIRST (MANDATORY)
       await submitEnquiry(enquiryData);
 
       toast({
@@ -85,19 +89,21 @@ export function EnquiryModal({ isOpen, onClose, machine, enquiryType }) {
 
       // 3. Format WhatsApp Message (EXACT FORMAT)
       const ADMIN_PHONE = '916379432565';
+      const name = formData.name.trim();
+      const mobile = formData.mobile.trim();
+      const brand = machine?.title || machine?.name || 'N/A';
+      const machineCategory = machine?.category || (enquiryType === 'Part' ? 'Spare Part' : 'N/A');
+      const code = machine?.machineCode || machine?.code || 'N/A';
+
       const whatsappMessage = `Hello Heavy Horizon,
 
+Name: ${name}
+Mobile: ${mobile}
+
 I am interested in the following machine:
-
-• Machine Code: ${machine?.machineCode || 'N/A'}
-• Machine Name: ${machine?.title || 'N/A'}
-• Model: ${machine?.model || 'N/A'}
-• Category: ${category}
-• Location: ${machine?.location || 'Not specified'}
-
-Customer Details:
-• Name: ${formData.name.trim()}
-• Mobile: ${formData.mobile.trim()}
+• Brand: ${brand}
+• Category: ${machineCategory}
+• Machine Code: ${code}
 
 Please contact me with further details.`;
 
@@ -105,7 +111,9 @@ Please contact me with further details.`;
 
       // Delay slightly for toast visibility then redirect
       setTimeout(() => {
+        // Open WhatsApp - official click-to-chat format
         window.open(`https://wa.me/${ADMIN_PHONE}?text=${text}`, '_blank');
+
         setFormData({ name: '', message: '', mobile: '', email: '' });
         setErrors({});
         onClose();
@@ -115,7 +123,7 @@ Please contact me with further details.`;
       console.error("Enquiry submission error:", error);
       toast({
         title: 'Error',
-        description: error.response?.data?.error || error.message || 'Failed to submit enquiry',
+        description: 'Something went wrong. Please try again.',
         variant: 'destructive',
       });
     } finally {

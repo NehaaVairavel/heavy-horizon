@@ -87,6 +87,7 @@ export default function ServiceCategory() {
   }, [category, info]);
 
   const handleEnquiry = (machine) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setSelectedMachine(machine);
     setIsModalOpen(true);
   };
@@ -124,7 +125,7 @@ export default function ServiceCategory() {
       >
         <div className="container">
           <div className="breadcrumb">
-            <Link to="/services">Our Services</Link>
+            <Link to="/services#machines-grid">Our Services</Link>
             <span>/</span>
             <span>{info.title}</span>
           </div>

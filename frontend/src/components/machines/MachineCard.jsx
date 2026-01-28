@@ -189,6 +189,7 @@ export function MachineCard({ machine, onEnquiry }) {
             className="btn btn-primary btn-block"
             onClick={(e) => {
               e.stopPropagation();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
               onEnquiry(machine);
             }}
           >

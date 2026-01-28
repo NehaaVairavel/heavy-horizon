@@ -311,6 +311,7 @@ def enquiry():
     ist = pytz.timezone('Asia/Kolkata')
     data["createdAt"] = datetime.now(ist).isoformat()
     data["is_viewed"] = False
+    data["status"] = "new"
     
     enquiries.insert_one(data)
     return jsonify({"message": "Enquiry submitted successfully"})

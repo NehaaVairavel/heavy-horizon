@@ -26,6 +26,7 @@ export default function SpareParts() {
   };
 
   const handleEnquiry = (part) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setSelectedPart(part);
     setIsModalOpen(true);
   };

@@ -51,34 +51,50 @@ export default function Contact() {
         message: formData.message.trim(),
         mobile: formData.mobile.trim(),
         email: formData.email.trim() || undefined,
+        category: 'Contact Us',
+        source_page: window.location.pathname,
+        machine_brand: 'General Enquiry',
+        machine_category: 'N/A',
+        machine_code: 'N/A'
       };
 
-      const response = await submitEnquiry(enquiryData);
+      await submitEnquiry(enquiryData);
 
       toast({
         title: 'Message Sent!',
         description: 'Redirecting you to WhatsApp...',
       });
 
-      // Construct WhatsApp URL client-side
+      // Format WhatsApp Message (EXACT FORMAT)
       const ADMIN_PHONE = '916379432565';
+      const name = formData.name.trim();
+      const mobile = formData.mobile.trim();
+
       const whatsappMessage = `Hello Heavy Horizon,
 
-Name: ${formData.name.trim()}
-Purpose: General Enquiry
-Message: ${formData.message.trim()}
+Name: ${name}
+Mobile: ${mobile}
 
-Please contact me.`;
+I am interested in the following machine:
+• Brand: General Enquiry
+• Category: N/A
+• Machine Code: N/A
+
+Please contact me with further details.`;
 
       const text = encodeURIComponent(whatsappMessage);
-      window.open(`https://wa.me/${ADMIN_PHONE}?text=${text}`, '_blank');
 
-      setFormData({ name: '', message: '', mobile: '', email: '' });
-      setErrors({});
+      setTimeout(() => {
+        window.open(`https://wa.me/${ADMIN_PHONE}?text=${text}`, '_blank');
+        setFormData({ name: '', message: '', mobile: '', email: '' });
+        setErrors({});
+      }, 1000);
+
     } catch (error) {
+      console.error("Contact submission error:", error);
       toast({
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to submit message',
+        description: 'Something went wrong. Please try again.',
         variant: 'destructive',
       });
     } finally {

@@ -70,6 +70,7 @@ export default function SalesCategory() {
   }, [category, info]);
 
   const handleEnquiry = (machine) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setSelectedMachine(machine);
     setIsModalOpen(true);
   };
@@ -107,7 +108,7 @@ export default function SalesCategory() {
       >
         <div className="container">
           <div className="breadcrumb">
-            <Link to="/sales">Sales</Link>
+            <Link to="/sales#machines-grid">Sales</Link>
             <span>/</span>
             <span>{info.title}</span>
           </div>
